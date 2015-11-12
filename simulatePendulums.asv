@@ -1,0 +1,20 @@
+function [] = simulatePendulums()
+%CHAOES
+
+g = 9.8;%m/s2
+lengthA = 1;%m
+massA = 1;%kg
+initThetaA = 0;
+initVelA = 0;
+
+    function dYdt = derivatives(~,Y)
+        thetaA = Y(1);
+        velA = Y(2);
+        
+        Fg = -massA*g;
+        Ft = -Fg*cos(thetaA);
+        
+        accelA = (Fg*sin(thetaA))/(massA*lengthA);
+    end
+end
+
