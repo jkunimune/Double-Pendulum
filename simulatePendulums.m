@@ -1,67 +1,47 @@
-function [] = simulatePendulums()
+function [T,Y,E] = simulatePendulums(Times, Initials)
 %CHAOES
 
 x = 1;
 y = 2;
 
 g = 9.8;%m/s2
-lengthA = 1;%m
-massA = 1;%kg
-initThetaA = -pi/2;
-initVelA = 0;
-lengthB = 1;%m
-massB = 1;%kg
-initThetaB = -pi/2;
-initVelB = 0;
+rA = 1;%m
+mA = 1;%kg
+rB = 1;%m
+mB = 1;%kg
 
-initXA = lengthA*sin(initThetaA);
-initYA = -lengthA*cos(initThetaA);
-initVXA = lengthA*sin(initVelA);
-initVYA = -lengthA*cos(initVelA);
-initXB = lengthB*sin(initThetaA)+initXA;
-initYB = -lengthB*cos(initThetaA)+initYA;
-initVXB = lengthB*sin(initVelA)+initVXA;
-initVYB = -lengthB*cos(initVelA)+initVYA;
+options = odeset('RelTol',1e-4);
 
-ode45(@derivatives, [0,10], [initXA;initYA;initVXA;initVYA;initXB;initYB;initVXB;initVYB]);
-legend('Theta_A','Velocity_A','Theta_B','Velocity_B');
+[T,Y] = ode45(@derivatives, Times, Initials, options);
+%ode45(@derivatives, [0,10], [initThetaA; initThetaB; initThetaDotA; initThetaDotB]);
+
+thetaA = Y(:,1);
+thetaB = Y(:,2);
+thetaDotA = Y(:,3);
+thetaDotB = Y(:,4);
+PEA = mA*g*rA*-cos(thetaA);
+PEB = mB*g*(-rA*cos(thetaA)-rB*cos(thetaB));
+KEA = 1/2*mA*(rA*thetaDotA).^2;
+KEB = 1/2*mB*(rA^2*thetaDotA.^2 + rB^2*thetaDotB.^2 + 2*rA*rB*thetaDotA.*thetaDotB.*cos(thetaA - thetaB));
+% KEB = 1/2*mB*((rA^2*thetaDotA^2.*cos(thetaA)+rB*thetaDotB.*cos(thetaB)).^2 + (rA*thetaDotA.*sin(thetaA)+rB*thetaDotB.*sin(thetaB)).^2);
+E = [PEA,PEB,KEA,KEB];
+%legend('Theta_A','Velocity_A','Theta_B','Velocity_B');
 
     function dYdt = derivatives(~,Y)
-        %cellzzz = num2cell(vectorsFromScalars(Y));
-        [RA,VA,RB,VB] = vectorsFromScalars(Y);
-        rA = norm(RA);
-        RAhat = RA/rA;
-        vA = norm(VA);
-        VAhat = VA/vA;
-        
-        rB = norm(RB);
-        RBhat = RB/rB;
-        vB = norm(VB);
-        VBhat = VB/vB;
-        
-        vBrelA = norm(VB - VA);
-        VBrelAhat = (VB - VA)/vBrelA;
-        rBrelA = norm(RB - RA);
-        RBrelAhat = (RB - RA)/rBrelA;
-        
-        ft = massA*(vA^2)/lengthA;
-        Ft = -ft*RAhat;
-        fc = calculateThatThing(Y);
-        FcA = fc*RBrelAhat;
-        FcB = -fc*RBrelAhat;
-        FgA = [0,-massA*g];
-        FgB = [0,-massB*g];
-        
-        AA = (FcA + Ft + FgA)/massA;
-        AB = (FcB + FgB)/massB;
-        
-        dYdt = [VA';AA';VB';AB'];
-        
-        function [RA,VA,RB,VB] = vectorsFromScalars(Set)
-           RA = [Set(1),Set(2)];
-           VA = [Set(3),Set(4)];
-           RB = [Set(5),Set(6)];
-           VB = [Set(7),Set(8)];
-        end
+         thetaA = Y(1);
+         thetaB = Y(2);
+         dThetaA = Y(3);
+         dThetaB = Y(4);
+         
+         numeratorA = -mB*g*sin(thetaB)*cos(thetaA-thetaB) + mB*rA*dThetaA^2*sin(thetaA-thetaB)*cos(thetaA-thetaB) + mA*g*sin(thetaA) + mB*g*sin(thetaA) + mB*rB*dThetaB^2*sin(thetaA-thetaB);
+         denominatorA = -mA*rA - mB*rA + mB*rA*cos(thetaA-thetaB)^2;
+         ddThetaA = numeratorA/denominatorA;
+         numeratorB = -g*sin(thetaB) - rA*ddThetaA*cos(thetaA-thetaB) + rA*dThetaA^2*sin(thetaA-thetaB);
+         denominatorB = rB;
+         
+         
+         ddThetaB = numeratorB/denominatorB;
+         
+         dYdt = [dThetaA;dThetaB;ddThetaA;ddThetaB];
     end
 end
