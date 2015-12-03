@@ -30,10 +30,8 @@ function animatePendula(T,Y,E)
     currenttime = timestep;
     for i=2:length(T);
         currenttime = currenttime+timestep;
-        % change position of rectangles
-        set(c1,'Position',[sin(thetaA(i)),-cos(thetaA(i)),.1,.1]);
-        set(c2,'Position',[sin(thetaA(i))+sin(thetaB(i)),-cos(thetaA(i))-cos(thetaB(i)),.1,.1]);
-        drawnow; % wait a little while so that the animation is visible
-        pause((T(i)-T(i-1)));
+       plot([0,sin(thetaA(i)),sin(thetaB(i))+sin(thetaA(i))], [0,-cos(thetaA(i)),-cos(thetaB(i))-cos(thetaA(i))], '-o');
+       axis([-2,2,-3,1]);
+       pause((T(i)-T(i-1)));
     end
 end

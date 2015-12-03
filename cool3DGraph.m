@@ -1,11 +1,11 @@
-Positions = linspace(-pi,pi,100);
-Times = linspace(.001,30,200);
+Positions = linspace(0,pi,1000);
+Times = linspace(.001,10,200);
 Finals = zeros(length(Positions),length(Times));
 Relatives = zeros(length(Positions),length(Times));
 
 for i = 1:length(Positions)
-    for j = 1:length(Times)
-        [T,Y,E] = simulatePendulums([0,Times(j)],[0,Positions(i),0,0]);
+    parfor j = 1:length(Times)
+        [T,Y,E] = simulatePendulums(.37,[0,Times(j)],[0,Positions(i),0,0]);
         Finals(i,j) = Y(end,2);
         Relatives(i,j) = Finals(i,j)-Positions(i);
         if Relatives(i,j) > pi
@@ -56,11 +56,12 @@ figure;
 
 for t = 1:length(Times)
     if t > 1
-        pause((Times(t)-Times(t-1)));
+        pause(50*(Times(t)-Times(t-1)));
     end
-    plot(Positions,(Finals(:,t))./(Positions)*100);
-    ylabel('Current Relative Position of Bottom Pendulum (%)');
-    xlabel('Initial Position of Bottom Pendulum (rad)');
+    plot(Positions,(Finals(:,t))./(Positions')*100,'.');
+    disp(Times(t))
+    ylabel('Current Relative Angle of Bottom Pendulum (%)');
+    xlabel('Initial Angle of Bottom Pendulum (rad)');
     axis([-pi,pi,-100,100]);
     ax = gca;
     ax.XTick = [-3*pi/2, -pi, -pi/2, 0, pi/2, pi, 3*pi/2];
