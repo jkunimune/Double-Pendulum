@@ -1,10 +1,10 @@
 function res = chaos3(times, massRatio)
     res = zeros(1,length(times));
-    InitPositions = linspace(-pi,pi,100);
+    InitPositions = linspace(0,pi,5000);
     Finals = zeros(length(times),length(InitPositions));
 
     for j = 1:length(InitPositions)
-        initThetaA = pi/2;%rad
+        initThetaA = InitPositions(j);%rad
         initThetaB = InitPositions(j);%rad
         initThetaDotA = 0;%rad/s
         initThetaDotB = 0;%rad/s

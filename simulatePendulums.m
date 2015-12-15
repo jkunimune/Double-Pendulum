@@ -1,8 +1,6 @@
 function [T,Y,E] = simulatePendulums(massratio, Times, Initials)
 %CHAOES
 
-
-
 g = 9.8;%m/s2
 rA = 1;%m
 mA = massratio;%kg

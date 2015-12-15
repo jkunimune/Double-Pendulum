@@ -27,11 +27,33 @@ function animatePendula(T,Y,E)
     c2 = rectangle('Position',[sin(thetaA(1))+sin(thetaB(1)),-cos(thetaA(1))-cos(thetaB(1)),.1,.1], ...
         'Curvature',[1,1]);
     timestep = .1;
-    currenttime = timestep;
     for i=2:length(T);
-        currenttime = currenttime+timestep;
-       plot([0,sin(thetaA(i)),sin(thetaB(i))+sin(thetaA(i))], [0,-cos(thetaA(i)),-cos(thetaB(i))-cos(thetaA(i))], '-o');
-       axis([-2,2,-3,1]);
-       pause((T(i)-T(i-1)));
+        clf;
+        hold on;
+        axis square;
+        plot([0,sin(thetaA(i)),sin(thetaB(i))+sin(thetaA(i))], [0,-cos(thetaA(i)),-cos(thetaB(i))-cos(thetaA(i))], 'k-o','LineWidth',2);
+        plot([sin(thetaA(i)),sin(thetaB(i))+sin(thetaA(i))], [-cos(thetaA(i)),-cos(thetaB(i))-cos(thetaA(i))], 'k.','MarkerSize',20);
+        axis([-2,2,-3,1]);
+        pause((T(i)-T(i-1)));
     end
+    
+    hold on;
+    plot(sin(thetaA),-cos(thetaA),'r');
+    plot(sin(thetaB)+sin(thetaA),-cos(thetaB)-cos(thetaA),'b');
+    
+    %%
+    figure;
+    i = 418;
+    thtA = Y(i,1);
+    thtB = Y(i,2);
+    dThA = Y(i,3);
+    dThB = Y(i,4);
+    
+    hold on;
+    axis square;
+    plot([0,sin(thtA),sin(thtB)+sin(thtA)], [0,-cos(thtA),-cos(thtB)-cos(thtA)], 'k-o','LineWidth',2,'MarkerSize',10);
+    plot([sin(thtA),sin(thtB)+sin(thtA)], [-cos(thtA),-cos(thtB)-cos(thtA)], 'k.','MarkerSize',30);
+    quiver(sin(thtA),           -cos(thtA),           dThA*cos(thtA),                dThA*sin(thtA),                'r','MaxHeadSize',.5);
+    quiver(sin(thtB)+sin(thtA), -cos(thtB)-cos(thtA), dThB*cos(thtB)+dThA*cos(thtA), dThB*sin(thtB)+dThA*sin(thtA), 'b','MaxHeadSize',.5);
+    axis([-2,1,-2,1]);
 end
